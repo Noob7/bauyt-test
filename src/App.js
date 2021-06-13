@@ -6,26 +6,33 @@ import {useEffect, useState} from 'react';
 import { getPublicGists } from './services/gistService';
 import GistList from './components/GistList';
 
+const Wrapper = styled.div`
+  font-size: 14px;
+  line-height: 1.5;
+`;
+
 const App = () => {
 
   const [gists, setGists] = useState([]);
+  const [userGists, setUserGists] = useState([])
 
   useEffect(() => {
-    getPublicGists().then(data=>setGists(data.data)).catch(err => alert(err)) 
+   // To get around doing async oprtations in hooks we need some extra work
+    let isMounted = true;   
+    getPublicGists().then(data=>{
+      if (isMounted) setGists(data.data);    // add conditional check
+      }).catch(err => alert(err)) 
+    return () => { isMounted = false }; // use cleanup to toggle value, if unmounted
   }, []);
 
   return (
     <Wrapper className="App" data-testid="app">
-      <Header />
-      <GistList gists={gists}/>
+      <Header setUserGists = {setUserGists}/>
+      <GistList gists={gists} userGists={userGists} setUserGists = {setUserGists}/>
       <GlobalStyles />
     </Wrapper>
   );
 }
 
-const Wrapper = styled.div`
-  font-size: 14px;
-  line-height: 1.5;
-`;
 
 export default App;

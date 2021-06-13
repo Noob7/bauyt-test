@@ -1,13 +1,15 @@
 import React from 'react'
+import PropTypes from 'prop-types';
+
 import styled from 'styled-components'
 import Octicon from 'react-octicon'
 
-const Search = () => {
+const Search = ({text, setText}) => {
   return (
     <Wrapper>
-      <InputBox>
+      <InputBox >
       <Octicon name="search" />
-      <Input placeholder="Search Gists for the username"/>
+      <Input data-testid="searchInput" placeholder="Search Gists for the username" value={text} onChange={(e)=>setText(e.target.value)}/>
       </InputBox>
     </Wrapper>
   )
@@ -37,5 +39,10 @@ const Input = styled.input`
     outline: 0;
   }
 `;
+
+Search.propTypes = {
+  text: PropTypes.string,
+  setText: PropTypes.func.isRequired,
+};
 
 export default Search
